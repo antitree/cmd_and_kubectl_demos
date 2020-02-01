@@ -1,0 +1,18 @@
+# A seperate service that makes sure only one instance of the webadmin service
+# is exposed publicly. This only works in environments that support LB's with a
+# public IP like GKE. 
+apiVersion: v1
+kind: Service
+metadata:
+  name: webadmin
+  labels:
+    app: webadmin
+spec:
+  type: LoadBalancer
+  selector:
+    app: webadmin
+  ports:
+  - port: 5000
+    name: http
+  selector:
+    app: webadmin

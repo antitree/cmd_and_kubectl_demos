@@ -1,0 +1,75 @@
+# Deployment of the vulnerable "webadmin" application. 
+# ------
+# Create a service account for the webadmin service 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: webadmin
+---
+# Create a deployment for webadmin to use the esrvice account
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webadmin
+  template:
+    metadata:
+      labels:
+        app: webadmin
+    spec:
+      serviceAccountName: webadmin
+      shareProcessNamespace: true # (Not used in this demo)
+      securityContext:
+        runAsUser: 999 # Must be non-0 if you use the PSP
+        fsGroup: 999 # As of 1.15 (I think) you need this set to access the servicetoken for the pod
+      containers:
+      - name: webadmin
+        image: gcr.io/shmoocon-talk-hacking/webadmin:latest # Change me
+        imagePullPolicy: Always
+        volumeMounts:  # Not used in this demo 
+        - mountPath: /etc/webadmin/tls
+          name: secret-volume
+          mountPropagation: 
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: webadmin-secret
+          optional: true
+---
+# VULNERABILITY 
+# Applies the allow_pod_read policy which allows the service
+# account to do whatever it wants in the affected namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: allow_pod_read
+  #namespace: default
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - '*'
+---
+# Bind the above role to the namespace you want (NOTE this assumes you're doing
+# `kubectl apply -f -n secure`)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: allow_pod_read_bind
+  #namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: allow_pod_read
+subjects:
+- kind: ServiceAccount
+  name: webadmin
+  #namespace: default
+
+

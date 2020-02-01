@@ -1,0 +1,57 @@
+# Create the 'secure' namespace representing a single tenant instance
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: secure
+---
+# Create a PSP that has some restrictions, but is missing others
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: restricted
+spec:
+  privileged: false
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  runAsUser:
+    # Require the container to run without root privileges.
+    rule: 'MustRunAsNonRoot'
+  fsGroup:
+    rule: RunAsAny
+  volumes:
+  - '*'
+---
+# Make the PSP available within the cluster
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: restricted-clusterrole
+rules:
+- apiGroups:
+  - extensions
+  resources:
+  - podsecuritypolicies
+  resourceNames:
+  - restricted
+  verbs:
+  - use
+---
+# Bind the PSP (ClusterRole) to all service accounts within the "secure"
+# namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: restricted-crb
+  namespace: secure
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: restricted-clusterrole
+subjects:
+# Example: All service accounts in my-namespace
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: system:serviceaccounts
+  namespace: secure
