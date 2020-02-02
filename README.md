@@ -1,7 +1,7 @@
 # Command and KubeCTL
 Setup and instructions for Command and Kubectl presentation. 
 
-Slides:
+Slides: https://docs.google.com/presentation/d/1y6KGGT5Uw27cCgFMKiGv0NjRhq8YvjY_S9UG8s_TThg/edit?usp=sharing
 
 ## Background: 
 
