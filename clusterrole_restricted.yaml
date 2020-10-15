@@ -5,7 +5,7 @@ metadata:
   name: secure
 ---
 # Create a PSP that has some restrictions, but is missing others
-apiVersion: extensions/v1beta1
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: restricted
@@ -30,7 +30,7 @@ metadata:
   name: restricted-clusterrole
 rules:
 - apiGroups:
-  - extensions
+  - policy
   resources:
   - podsecuritypolicies
   resourceNames:
@@ -54,4 +54,4 @@ subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
   name: system:serviceaccounts
-  namespace: secure
+  #namespace: secure

@@ -17,7 +17,7 @@ gcloud beta container \
     --zone "$REGIONS" \
     --no-enable-basic-auth \
     `# This will need to be changed as GKE stop supporting versions. E.g. may need to change to 1.15.8 if point release` \
-    --cluster-version "1.15.7-gke.23" \
+    --cluster-version "1.15.12-gke.4000" \
     `# Do you care about money?` \
     --machine-type "e2-standard-2" \
     `# ubuntu because it's easier to priv esc in` \

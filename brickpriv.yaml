@@ -9,7 +9,7 @@ spec:
   containers:
   - name: brick
     hostPID: true
-    image: gcr.io/shmoocon-talk-hacking/brick
+    image: antitree/brick
     volumeMounts:
       - mountPath: /chroot
         name: host
