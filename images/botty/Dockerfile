@@ -1,5 +1,5 @@
 #FROM ubuntu:latest
-FROM ubuntu:latest
+FROM ubuntu:kinetic
 LABEL maintainer="antitree"
 
 EXPOSE 8080
