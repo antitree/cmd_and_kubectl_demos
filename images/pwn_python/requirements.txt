@@ -1,2 +1,2 @@
-Flask
+Flask==3.0.0
 Flask-BasicAuth
